@@ -1,0 +1,30 @@
+# secrets / local env
+.env
+.env.*
+!.env.example
+*.pem
+*secret*
+!**/authorization.md
+
+# node
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+npm-debug.log*
+
+# rust
+target/
+**/*.rs.bk
+Cargo.lock.bak
+*.wasm
+
+# stellar cli local state
+.stellar/
+
+# os
+.DS_Store
+
+# editors
+.vscode/
+.idea/

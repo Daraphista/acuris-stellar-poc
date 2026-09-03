@@ -1,0 +1,18 @@
+{
+  "name": "acuris-stellar-poc",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Acuris Med AI - Stellar Testnet proofs-of-concept for the Instawards program. See README.md.",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "scripts"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
