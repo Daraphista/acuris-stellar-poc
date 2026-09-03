@@ -1,0 +1,18 @@
+{
+  "synthetic": true,
+  "description": "Corrected re-issue of batch_0001.synthetic.json (one entry content changed), used to demonstrate the supersession flow. See docs/authorization.md.",
+  "entries": [
+    {
+      "relativePath": "notes/synthetic_note_0001.txt",
+      "sha256Hex": "b8a73e7fffff8175c2db77ea1a016893e968c64927234c312eb70e77c5a66ba5"
+    },
+    {
+      "relativePath": "notes/synthetic_note_0002.txt",
+      "sha256Hex": "2263e5018833d0171876e55728cad651ce7d2bfb1043e2257a4927a9a72b18f7"
+    },
+    {
+      "relativePath": "labs/synthetic_lab_0001.jsonl",
+      "sha256Hex": "777a04491897a1667cfd40227f32435c59be796569441c26db78dc889edfb8d0"
+    }
+  ]
+}

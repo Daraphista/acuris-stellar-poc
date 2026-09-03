@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "description": "Synthetic stand-in batch, used to demonstrate a second independent registration. See docs/privacy-model.md.",
+  "entries": [
+    {
+      "relativePath": "notes/synthetic_note_0101.txt",
+      "sha256Hex": "05356b08ca5565342e143d824264d5d290f3293c489e30d639ebdd92144ceb20"
+    },
+    {
+      "relativePath": "labs/synthetic_lab_0101.jsonl",
+      "sha256Hex": "0a3a5c421e570aedf3b3cd43bc0602d6cc81d4e7f8a4c75ee307d277a8ca5f51"
+    }
+  ]
+}

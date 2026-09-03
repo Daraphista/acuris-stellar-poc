@@ -25,6 +25,9 @@ Cargo.lock.bak
 # stellar cli local state
 .stellar/
 
+# local Claude Code state (system-map reminder counter, etc.)
+.claude/
+
 # os
 .DS_Store
 

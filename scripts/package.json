@@ -1,0 +1,19 @@
+{
+  "name": "@acuris-stellar-poc/scripts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Operational scripts for D1/D2, run against a deployed Testnet contract. See docs/runbook.md.",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "provenance:register": "npm run build && node --env-file=../.env dist/register-provenance.js",
+    "provenance:verify": "npm run build && node --env-file=../.env dist/verify-provenance.js"
+  },
+  "dependencies": {
+    "@acuris-stellar-poc/canonical": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "@types/node": "^22.9.0"
+  }
+}

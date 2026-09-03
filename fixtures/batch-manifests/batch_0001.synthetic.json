@@ -1,0 +1,18 @@
+{
+  "synthetic": true,
+  "description": "Synthetic stand-in for a de-identified clinical data batch manifest. Demonstrates the D2 provenance flow only; contains no real patient data or file content. See docs/privacy-model.md.",
+  "entries": [
+    {
+      "relativePath": "notes/synthetic_note_0001.txt",
+      "sha256Hex": "7e2b13428ec982046f2cb052c12f1da24831b17a1da31eac90676966ded53b81"
+    },
+    {
+      "relativePath": "notes/synthetic_note_0002.txt",
+      "sha256Hex": "2263e5018833d0171876e55728cad651ce7d2bfb1043e2257a4927a9a72b18f7"
+    },
+    {
+      "relativePath": "labs/synthetic_lab_0001.jsonl",
+      "sha256Hex": "777a04491897a1667cfd40227f32435c59be796569441c26db78dc889edfb8d0"
+    }
+  ]
+}

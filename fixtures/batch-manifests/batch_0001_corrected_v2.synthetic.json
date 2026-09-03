@@ -1,0 +1,18 @@
+{
+  "synthetic": true,
+  "description": "Second correction of batch_0001, demonstrating a multi-hop supersession chain registered via scripts/register-provenance.ts. See docs/authorization.md.",
+  "entries": [
+    {
+      "relativePath": "notes/synthetic_note_0001.txt",
+      "sha256Hex": "c62fc4aa43e3d2dd3b5ef598cb5afe8f258f55c8cac2bda33d60f822996c4a8b"
+    },
+    {
+      "relativePath": "notes/synthetic_note_0002.txt",
+      "sha256Hex": "2263e5018833d0171876e55728cad651ce7d2bfb1043e2257a4927a9a72b18f7"
+    },
+    {
+      "relativePath": "labs/synthetic_lab_0001.jsonl",
+      "sha256Hex": "777a04491897a1667cfd40227f32435c59be796569441c26db78dc889edfb8d0"
+    }
+  ]
+}
