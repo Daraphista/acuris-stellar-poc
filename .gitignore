@@ -18,6 +18,9 @@ target/
 **/*.rs.bk
 Cargo.lock.bak
 *.wasm
+# auto-generated per-test ledger snapshots from soroban-sdk testutils, regenerated on every
+# `cargo test` — not authored content, no review value (see docs/evidence.md for real evidence)
+**/test_snapshots/
 
 # stellar cli local state
 .stellar/
