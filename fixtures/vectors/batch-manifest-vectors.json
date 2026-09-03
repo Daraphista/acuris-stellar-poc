@@ -1,0 +1,49 @@
+[
+  {
+    "name": "single-file",
+    "entries": [
+      {
+        "relativePath": "lab_results/patient_batch_0001.jsonl",
+        "sha256Hex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "expected_domain_tag": "acuris.batch-manifest.v1",
+    "expected_digest_hex": "b06542829322250b40afc13ba9246a8a2491cd87bc8371bae8106e54f5fbe044"
+  },
+  {
+    "name": "multi-file-unsorted-input",
+    "entries": [
+      {
+        "relativePath": "z_notes.txt",
+        "sha256Hex": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      {
+        "relativePath": "a_notes.txt",
+        "sha256Hex": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      {
+        "relativePath": "m_notes.txt",
+        "sha256Hex": "3333333333333333333333333333333333333333333333333333333333333333"
+      }
+    ],
+    "expected_domain_tag": "acuris.batch-manifest.v1",
+    "expected_digest_hex": "81ff246db453f95de26dff0e7f402f586337f4f310ec62e3427d6fe9b018702d"
+  },
+  {
+    "name": "nfc-normalization-path",
+    "entries": [
+      {
+        "relativePath": "cafe\u0301.txt",
+        "sha256Hex": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    ],
+    "expected_domain_tag": "acuris.batch-manifest.v1",
+    "expected_digest_hex": "3bab6dcc046e42fa578b5a347528677449f54b59a81b5e7a97fb0a28eebe6f6b"
+  },
+  {
+    "name": "empty-manifest",
+    "entries": [],
+    "expected_domain_tag": "acuris.batch-manifest.v1",
+    "expected_digest_hex": "37e6d5548b4706726e3cc50f27a5eb9c0dbe4f2c1500ab3b7e8ae001b42f2003"
+  }
+]

@@ -1,0 +1,54 @@
+[
+  {
+    "name": "acuris-ekonsulta-sample",
+    "event": {
+      "eventId": "evt_001",
+      "source": "e-konsulta-lab-routing",
+      "assetCode": "SRT",
+      "grossAmountMinor": "10000000",
+      "occurredAt": "2026-09-03T14:05:00Z",
+      "partnerRef": "e-konsulta-medical-clinic"
+    },
+    "expected_domain_tag": "acuris.settlement.v1",
+    "expected_digest_hex": "18a6b91d7aedbb6073bef6eec0be6cd34f31306e8ae954ab88db4496a736bab9"
+  },
+  {
+    "name": "zero-amount-edge-case",
+    "event": {
+      "eventId": "evt_zero",
+      "source": "e-konsulta-lab-routing",
+      "assetCode": "SRT",
+      "grossAmountMinor": "0",
+      "occurredAt": "2026-01-01T00:00:00Z",
+      "partnerRef": "e-konsulta-medical-clinic"
+    },
+    "expected_domain_tag": "acuris.settlement.v1",
+    "expected_digest_hex": "89d36c299e193135c093fc1da51c307b182f101a4f55e4b64bbc65805b2bf155"
+  },
+  {
+    "name": "max-u64-amount-edge-case",
+    "event": {
+      "eventId": "evt_max",
+      "source": "e-konsulta-lab-routing",
+      "assetCode": "SRT",
+      "grossAmountMinor": "18446744073709551615",
+      "occurredAt": "2026-01-01T00:00:00Z",
+      "partnerRef": "e-konsulta-medical-clinic"
+    },
+    "expected_domain_tag": "acuris.settlement.v1",
+    "expected_digest_hex": "df2b83b4145623d7fc035bd496590e27168de4b7e2760153dc6b90022a250920"
+  },
+  {
+    "name": "empty-string-field",
+    "event": {
+      "eventId": "evt_empty_source",
+      "source": "",
+      "assetCode": "SRT",
+      "grossAmountMinor": "1",
+      "occurredAt": "2026-01-01T00:00:00Z",
+      "partnerRef": "e-konsulta-medical-clinic"
+    },
+    "expected_domain_tag": "acuris.settlement.v1",
+    "expected_digest_hex": "30d04ac1690c87f022395b70fba55f99218ca7250f56dc3bb406fd9b49797e4e"
+  }
+]
