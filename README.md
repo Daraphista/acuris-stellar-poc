@@ -6,7 +6,8 @@ Instawards program: a verifiable settlement rail for revenue-share partnerships,
 tamper-evident provenance registry for de-identified clinical data batches.
 
 **Status:** Phase 0 (pre-submission groundwork) — see `docs/devlog.md`. Deliverable 2 is built,
-tested, and deployed live to Testnet. Deliverable 1 is funded-sprint scope, not yet started.
+tested, and deployed live to Testnet, ahead of its original schedule. Deliverable 1 is funded-sprint
+scope, not yet started — see `docs/roadmap.md` for the 30-day plan.
 
 ## Problem
 
@@ -87,7 +88,8 @@ Contract ID, WASM checksum, every transaction hash, and both live negative-case 
 | `docs/authorization.md` | Who can call what, key handling, duplicate/revision rules |
 | `docs/evidence.md` | Contract ID, WASM hash, tx hashes, negative-case results |
 | `docs/runbook.md` | Exact, verified reproduction commands |
-| `docs/devlog.md` | Dated log of what was built and why |
+| `docs/devlog.md` | Dated log of what was built and why (backward-looking) |
+| `docs/roadmap.md` | The 30-day execution plan (forward-looking) |
 
 ## Scope boundaries
 
