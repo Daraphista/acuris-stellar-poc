@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+      - run: npm install
+      - run: npm test
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32v1-none
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test -p acuris-provenance-contract
+      - run: cargo build -p acuris-provenance-contract --target wasm32v1-none --release
+
+# A `pages` job (build web/, deploy to GitHub Pages) is added once the D1 demo harness exists
+# (funded sprint, Week 2) — see docs/architecture.md.
