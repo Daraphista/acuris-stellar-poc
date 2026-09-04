@@ -23,17 +23,22 @@ import {
 // Primitives
 // ---------------------------------------------------------------------------
 
+/** Reads a big-endian uint32 out of a Uint8Array — the test-side mirror of bytes.ts's u32be. */
+function readUInt32BE(bytes: Uint8Array, offset: number): number {
+  return new DataView(bytes.buffer, bytes.byteOffset + offset, 4).getUint32(0, false);
+}
+
 test("lengthPrefixed: 4-byte BE length + utf8 bytes", () => {
   const lp = lengthPrefixed("abc");
   assert.equal(lp.length, 4 + 3);
-  assert.equal(lp.readUInt32BE(0), 3);
-  assert.equal(lp.subarray(4).toString("utf8"), "abc");
+  assert.equal(readUInt32BE(lp, 0), 3);
+  assert.equal(new TextDecoder().decode(lp.subarray(4)), "abc");
 });
 
 test("lengthPrefixed: empty string is length 0, no ambiguity with absence", () => {
   const lp = lengthPrefixed("");
   assert.equal(lp.length, 4);
-  assert.equal(lp.readUInt32BE(0), 0);
+  assert.equal(readUInt32BE(lp, 0), 0);
 });
 
 test("normalizeString: NFC-normalizes", () => {
@@ -113,8 +118,8 @@ const SAMPLE_EVENT: RevenueEvent = {
 test("canonicalRevenueEventBytes: fixed field order, length-prefixed", () => {
   const bytes = canonicalRevenueEventBytes(SAMPLE_EVENT);
   // event_id LP first: 4-byte len(7) + "evt_001"
-  assert.equal(bytes.readUInt32BE(0), 7);
-  assert.equal(bytes.subarray(4, 11).toString("utf8"), "evt_001");
+  assert.equal(readUInt32BE(bytes, 0), 7);
+  assert.equal(new TextDecoder().decode(bytes.subarray(4, 11)), "evt_001");
 });
 
 test("settlementDigest: deterministic, 32 bytes", () => {
