@@ -6,11 +6,12 @@
   "license": "MIT",
   "workspaces": [
     "packages/*",
-    "scripts"
+    "scripts",
+    "web"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run build --workspaces --if-present && npm run test --workspaces --if-present"
   },
   "engines": {
     "node": ">=22.0.0"
