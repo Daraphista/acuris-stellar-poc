@@ -89,6 +89,14 @@ plan this leads into.
 - Couldn't fully dry-run the Vercel build locally (`vercel build` requires an authenticated,
   linked project); validated the part that's actually in question — the npm-workspace install
   resolving `packages/canonical`/`packages/settlement` before `web`'s own build runs — by
-  re-confirming `npm run build --workspaces` still succeeds from the repo root. Vercel's
-  monorepo workspace detection (Root Directory set to `web`) is standard, documented behavior,
-  but the first real Vercel deploy is still the actual proof.
+  re-confirming `npm run build --workspaces` still succeeds from the repo root.
+- **The first real Vercel deploy failed**: `Cannot find module '@acuris-stellar-poc/settlement'`.
+  Root Directory = `web` in the Vercel dashboard turned out not to work the way assumed — Vercel's
+  own docs are explicit that a project's Root Directory sandboxes it from every file outside that
+  directory, with no `..` escape, for *any* command (install, build). That's a hard platform
+  constraint, not a workspace-detection gap to route around. Fixed by moving `vercel.json` to the
+  repo root (deleting the `web/vercel.json` that assumed the wrong model) and leaving Vercel's
+  Root Directory setting **unset** — the project now builds from the actual repo root, with
+  `outputDirectory: "web/dist"` pointing at what the build produces. Verified with a from-scratch
+  local rebuild (wiped every workspace's `dist/`, reinstalled, ran the exact `vercel.json`
+  commands) before pushing a second time.
