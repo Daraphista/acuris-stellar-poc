@@ -2,9 +2,10 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 
-// Base path matches this repo's GitHub Pages URL (daraphista.github.io/acuris-stellar-poc/).
-// Override with VITE_BASE for local static-preview testing at a different mount point.
-const base = process.env.VITE_BASE ?? "/acuris-stellar-poc/";
+// Served from a custom domain (testnet.acurismed.com) at the root, not a repo-name subpath —
+// see web/public/CNAME. Override with VITE_BASE for local static-preview testing at a
+// different mount point.
+const base = process.env.VITE_BASE ?? "/";
 
 export default defineConfig({
   base,

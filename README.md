@@ -18,7 +18,7 @@ settlement rail, and a tamper-evident provenance registry for de-identified clin
 ![Tests](https://img.shields.io/badge/tests-49_passing-1D9E75?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-1D9E75?style=flat-square)
 
-[**Live demo**](https://daraphista.github.io/acuris-stellar-poc/) · [Live contract](https://stellar.expert/explorer/testnet/contract/CCTYK4O5YMMCA2JYXVZRHDGKTJBBX56ALHRR3BBW32K4Y7RPCWBYFJ77) · [Evidence](docs/evidence.md) · [Architecture](docs/architecture.md) · [Runbook](docs/runbook.md) · [Roadmap](docs/roadmap.md)
+[**Live demo**](https://testnet.acurismed.com/) · [Live contract](https://stellar.expert/explorer/testnet/contract/CCTYK4O5YMMCA2JYXVZRHDGKTJBBX56ALHRR3BBW32K4Y7RPCWBYFJ77) · [Evidence](docs/evidence.md) · [Architecture](docs/architecture.md) · [Runbook](docs/runbook.md) · [Roadmap](docs/roadmap.md)
 
 </div>
 
@@ -33,7 +33,7 @@ settlement rail, and a tamper-evident provenance registry for de-identified clin
 ## 🖥️ The demo
 
 Both tabs are live against the real deployed contract and real funded Testnet accounts —
-**[open it](https://daraphista.github.io/acuris-stellar-poc/)** and click through yourself, or
+**[open it](https://testnet.acurismed.com/)** and click through yourself, or
 look at what it produced:
 
 <table>
@@ -67,10 +67,10 @@ this project.
 | Capability | What it proves | Status |
 |---|---|---|
 | **Split** | A revenue event splits 50/50 in integer minor units — no floats, a `sum(legs) === gross` property test over 10,000 random draws | Done — `packages/settlement` |
-| **Settle** | Both payment legs land in one atomic classic Stellar transaction, memo-tagged with a digest of the event that authorized it | **Live on Testnet** — [demo](https://daraphista.github.io/acuris-stellar-poc/#settlement), [evidence](docs/evidence.md) |
+| **Settle** | Both payment legs land in one atomic classic Stellar transaction, memo-tagged with a digest of the event that authorized it | **Live on Testnet** — [demo](https://testnet.acurismed.com/#settlement), [evidence](docs/evidence.md) |
 | **Hash** | A batch manifest's digest is computed identically in TypeScript and Rust from one written spec, cross-checked against fixed vectors | Done — `packages/canonical`, `contracts/provenance` |
 | **Register** | A digest, an opaque batch id, and a terms reference are recorded on-chain — fail-closed on duplicates, non-destructive on corrections | **Deployed & live** — [contract](https://stellar.expert/explorer/testnet/contract/CCTYK4O5YMMCA2JYXVZRHDGKTJBBX56ALHRR3BBW32K4Y7RPCWBYFJ77) |
-| **Verify** | Anyone — reviewer or Acuris — can independently recompute a digest and check it against the chain, with no special access | **Live** — [demo](https://daraphista.github.io/acuris-stellar-poc/#provenance) |
+| **Verify** | Anyone — reviewer or Acuris — can independently recompute a digest and check it against the chain, with no special access | **Live** — [demo](https://testnet.acurismed.com/#provenance) |
 
 ## 🌐 How it uses Stellar
 
