@@ -18,7 +18,7 @@ settlement rail, and a tamper-evident provenance registry for de-identified clin
 ![Tests](https://img.shields.io/badge/tests-49_passing-1D9E75?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-1D9E75?style=flat-square)
 
-[**Live demo**](https://testnet.acurismed.com/) · [Live contract](https://stellar.expert/explorer/testnet/contract/CCTYK4O5YMMCA2JYXVZRHDGKTJBBX56ALHRR3BBW32K4Y7RPCWBYFJ77) · [Evidence](docs/evidence.md) · [Architecture](docs/architecture.md) · [Runbook](docs/runbook.md) · [Roadmap](docs/roadmap.md)
+[**Live demo**](https://testnet.acurismed.com/) · [Acuris Med AI](https://acurismed.com) · [Live contract](https://stellar.expert/explorer/testnet/contract/CCTYK4O5YMMCA2JYXVZRHDGKTJBBX56ALHRR3BBW32K4Y7RPCWBYFJ77) · [Evidence](docs/evidence.md) · [Architecture](docs/architecture.md) · [Runbook](docs/runbook.md) · [Roadmap](docs/roadmap.md)
 
 </div>
 
@@ -53,14 +53,14 @@ look at what it produced:
 
 ## 🧩 Why this exists
 
-Acuris Med AI runs a clinical documentation platform for the Philippine healthcare and medical
-transcription market, and has a signed Memorandum of Agreement with E-Konsulta Medical Clinic
-(2026-06-24) structured as a 50% revenue-share on laboratory and prescription routing. Two things
-are unbuilt for the pilot: a settlement mechanism (today, manual bank transfers — slow, costly to
-reconcile, no independently verifiable record), and a provenance record for the de-identified
-clinical dataset Acuris uses for ASR/LLM work (today, no tamper-evident record of what that data
-is or the terms it may be used under). The team had no prior Stellar or Soroban experience before
-this project.
+[Acuris Med AI](https://acurismed.com) runs a clinical documentation platform for the Philippine
+healthcare and medical transcription market, and has a signed Memorandum of Agreement with
+E-Konsulta Medical Clinic (2026-06-24) structured as a 50% revenue-share on laboratory and
+prescription routing. Two things are unbuilt for the pilot: a settlement mechanism (today, manual
+bank transfers — slow, costly to reconcile, no independently verifiable record), and a provenance
+record for the de-identified clinical dataset Acuris uses for ASR/LLM work (today, no
+tamper-evident record of what that data is or the terms it may be used under). The team had no
+prior Stellar or Soroban experience before this project.
 
 ## 🔁 What it does
 
