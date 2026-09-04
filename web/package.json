@@ -1,0 +1,28 @@
+{
+  "name": "@acuris-stellar-poc/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Static Testnet demo harness for D1 (settlement rail) and D2 (provenance registry). Deployed to GitHub Pages. See docs/architecture.md.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@acuris-stellar-poc/canonical": "*",
+    "@acuris-stellar-poc/settlement": "*",
+    "@stellar/stellar-sdk": "17.0.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "typescript": "^5.6.3",
+    "vite": "^8.2.2"
+  }
+}
