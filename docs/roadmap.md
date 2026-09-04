@@ -5,11 +5,18 @@ ever disagree about what's done, the devlog (and `git log`) win.
 
 ## Where this starts from
 
-As of 2026-09-03 (see `docs/devlog.md`): **D2's core registry is done** — built, tested (30
-passing tests across both languages), deployed live to Testnet, and exercised end-to-end including
-both negative cases. That's ahead of where the original SOW draft assumed it would be at this
-point (it scoped D2 as Week 3 of the *funded* 30 days). **D1 is 0% built.** D3 is partial — most
-of the documentation set exists; testing, the demo video, and the full negative-case matrix don't.
+As of 2026-09-04 (see `docs/devlog.md`): **D2's core registry is done** — built, tested (49
+passing tests across both languages, up from 30 as of the previous entry), deployed live to
+Testnet, and exercised end-to-end including both negative cases. That's ahead of where the
+original SOW draft assumed it would be at this point (it scoped D2 as Week 3 of the *funded* 30
+days). **D1 is no longer 0% built**, still ahead of schedule: `packages/settlement` (the split
+engine and transaction builder — Week 1 foundations, below) and a live demo at `web/` (Week 2's
+harness, below, in a smaller variant) both exist and have run a real transaction on Testnet — see
+`docs/evidence.md`. What's still outstanding from D1's funded scope: Stellar-Wallets-Kit signing
+(the demo signs with an ephemeral in-browser keypair instead), the testanchor SRT asset and
+trustlines (the demo pays in native XLM instead), and the full negative-case matrix below. D3 is
+partial — most of the documentation set exists; testing, the demo video, and the full
+negative-case matrix don't.
 
 **Reallocation call**: rather than run the original per-deliverable hour split (D1 70 / D2 65 /
 D3 31) as if D2 were still unbuilt, redirect most of D2's remaining budget toward D1 (the larger,
@@ -58,27 +65,36 @@ Unfunded, a few hours, not part of the 166:
   Doghouse Certified for explicitly (acceptance-criterion-to-artifact mapping, plus a stated list
   of what was and wasn't checked).
 
-**D1 foundations (~25 hrs):**
-- `scripts/setup-accounts.ts`: SEP-1 discovery against `testanchor.stellar.org`, trustline
-  establishment for `acuris`/`partner` (this is the Phase-0-tail item above, formalized as a
-  reusable script rather than one-off commands).
-- `packages/settlement`: the split engine — integer-minor-unit arithmetic, the `sum(legs) ==
+**D1 foundations (~25 hrs, partly done ahead of schedule — see below):**
+- ~~`packages/settlement`: the split engine — integer-minor-unit arithmetic, the `sum(legs) ==
   gross` property test, and the unsigned-XDR builder for the atomic two-payment-operation
-  transaction described in `docs/architecture.md`.
-- Add `@stellar/stellar-sdk` as a dependency where the XDR builder needs it; keep
-  `packages/canonical` dependency-free as-is (settlement events still hash through it).
+  transaction described in `docs/architecture.md`.~~ **Done** — 16 tests including the property
+  test over 10,000 random draws, and a vector-driven test tying the transaction's memo to the
+  same pinned digests the Rust suite checks. `@stellar/stellar-sdk` (pinned `17.0.1`, the first
+  version needing no Buffer polyfill for a browser bundle) added as a dependency here;
+  `packages/canonical` stays dependency-free, now split into Node (sync) and browser (async)
+  entry points so both `packages/settlement` and `web/` can use it. See `docs/evidence.md`.
+- `scripts/setup-accounts.ts`: SEP-1 discovery against `testanchor.stellar.org`, trustline
+  establishment for `acuris`/`partner` — **still outstanding**. The demo variant below pays in
+  native XLM specifically to avoid needing this first; it's still needed for the
+  Wallets-Kit-signed, anchor-asset flow `docs/architecture.md` describes as the funded-sprint
+  target.
 
 ## Week 2 — D1 complete (~45 hrs)
 
-- `web/`: the Vite + React Stellar Wallets Kit harness — connect, show the computed split, sign,
-  submit, display the resulting tx hash and explorer link. Static build.
-- Wire `scripts/settle.ts`: revenue event in, split computed, unsigned XDR out, handed to the
-  harness (or signed directly via a Testnet key for CLI-only demonstration, matching how
-  `register-provenance.ts` works today).
-- First real end-to-end simulated payout on Testnet — record the tx hash the moment it exists,
-  don't wait until the end of the week (that's how D2's evidence stayed accurate today).
-- Add the `pages` job to `.github/workflows/ci.yml` (deferred when it was written, since `web/`
-  didn't exist yet) and deploy the harness to GitHub Pages.
+- ~~`web/`: the Vite + React ... harness — connect, show the computed split, sign, submit, display
+  the resulting tx hash and explorer link. Static build.~~ **Done, in a smaller variant** — see
+  `docs/architecture.md`'s "Instawards demo variant". The harness exists, is deployed, and has
+  produced a real settlement transaction (`docs/evidence.md`), but it signs with an ephemeral
+  in-browser keypair rather than Stellar Wallets Kit, and pays in native XLM rather than the
+  testanchor asset. Swapping in real wallet signing and the anchor asset is what's left of this
+  item, not building the harness from scratch.
+- Wire `scripts/settle.ts`: revenue event in, split computed, unsigned XDR out — **still
+  outstanding**. `web/` calls `packages/settlement` directly today; a standalone CLI script
+  (matching how `register-provenance.ts` works for D2) hasn't been written.
+- ~~First real end-to-end simulated payout on Testnet~~ **Done** — recorded the moment it existed,
+  same discipline D2's evidence was held to. See `docs/evidence.md`.
+- ~~Add the `pages` job to `.github/workflows/ci.yml`~~ **Done** and deployed.
 
 ## Week 3 — D1 negative cases, integration, D3 depth (~45 hrs)
 

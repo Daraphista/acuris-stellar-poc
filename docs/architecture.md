@@ -80,6 +80,31 @@ demonstrating (a split-payout mechanism) and would add a brittle popup-driven fl
 path for no evidentiary benefit. SEP-10 web-auth against the anchor is a documented stretch item,
 attempted only after D1 and D2 are otherwise complete.
 
+### Instawards demo variant
+
+`web/`'s live demo runs a deliberately smaller version of the sequence above, built so a reviewer
+with nothing installed can watch a real settlement happen:
+
+- **Ephemeral keypair instead of a wallet extension.** `Keypair.random()` is generated in the
+  visitor's own browser tab, funded via Friendbot, and used to sign the one settlement
+  transaction — then discarded. It never touches storage, logs, or the DOM; see
+  `web/src/lib/settlementRail.ts`. This is strictly a demo-signing convenience: it does not
+  replace Wallets-Kit signing as the funded-sprint target, which remains the plan for the
+  production-shaped flow above.
+- **Native XLM instead of the testanchor asset.** The demo pays out in native XLM — no
+  trustline setup needed. The testanchor SRT asset and trustline flow described above are
+  unchanged funded-sprint scope; the demo doesn't touch them.
+- Everything else is identical: the same `packages/settlement` split engine and transaction
+  builder, the same `settlement_digest` construction, one atomic transaction with 2 payment ops
+  and a `MEMO_HASH`. The demo's first real transaction is recorded in `docs/evidence.md`.
+
+**The remainder rule.** When the gross amount doesn't split evenly in two, `splitFiftyFifty`
+(`packages/settlement/src/split.ts`) puts the odd minor unit on a **fixed** recipient — the
+partner leg, not configurable — because a rule a caller could change is a rule a reviewer
+couldn't verify from the published event JSON alone. A gross below 2 minor units is rejected
+before it ever reaches a transaction builder: Stellar rejects a payment operation with a
+non-positive amount, so a two-leg 50/50 split cannot express a gross of 0 or 1 at all.
+
 ## D2 — Clinical Data Provenance Contract
 
 ```mermaid

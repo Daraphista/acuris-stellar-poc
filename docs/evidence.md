@@ -1,8 +1,9 @@
 # Evidence Manifest
 
 Maps each acceptance criterion to a concrete, independently-checkable artifact. Everything under
-"Deliverable 2" below is real Testnet state, captured during Phase 0 — reproducible end-to-end via
-`docs/runbook.md`, and cross-checked against Horizon directly (not just CLI output) where noted.
+"Deliverable 2" and "Deliverable 1" below is real Testnet state — reproducible end-to-end via
+`docs/runbook.md`, and cross-checked against Horizon directly (not just CLI or page output) where
+noted.
 
 Network throughout: **Stellar Testnet** (`Test SDF Network ; September 2015`). Nothing here is
 Mainnet, and no real funds or real clinical data are involved anywhere in this manifest.
@@ -72,12 +73,14 @@ secondary index tracks corrections rather than the first-ever registration.
 
 | Suite | Location | Count | What it covers |
 |---|---|---|---|
-| TypeScript | `packages/canonical/test/canonical.test.ts` | 15 | Encoding primitives, both digest functions, and vector-file parity |
+| TypeScript — canonicalization | `packages/canonical/test/*.test.ts` | 18 | Encoding primitives, both digest functions, vector-file parity, and Node-vs-WebCrypto (sync-vs-async) digest parity for the browser entry point |
+| TypeScript — settlement | `packages/settlement/test/*.test.ts` | 16 | Decimal/stroop conversion, the 50/50 split engine (incl. a `sum(legs) === gross` property test over 10,000 random draws), and the transaction builder, vector-driven against the same fixtures |
 | Rust — contract behavior | `contracts/provenance/src/test.rs` | 13 | init/admin/registrar auth, duplicate rejection, supersession (incl. rejecting a non-Active `supersedes` target), revoke, not-found paths |
 | Rust — cross-language parity | `contracts/provenance/src/canonical_check.rs` | 2 | Independent Rust reimplementation of `docs/canonicalization.md`, asserted against the same `fixtures/vectors/*.json` the TypeScript suite uses |
 
-Run both with `npm test` and `cargo test -p acuris-provenance-contract` respectively (see
-`docs/runbook.md`). All 30 tests pass as of this writing.
+Run with `npm test` (builds and tests every TypeScript workspace, including a type-check of
+`web/`) and `cargo test -p acuris-provenance-contract` (see `docs/runbook.md`). All 49 tests
+pass as of this writing.
 
 ### Manifests used
 
@@ -88,9 +91,31 @@ unless explicitly overridden.
 
 ## Deliverable 1 — Revenue-Share Settlement Rail
 
-Funded-sprint scope (Weeks 1-2 per the execution plan) — not yet built. This section will be
-filled in the same way once `packages/settlement` and `web/` exist: transaction hashes, explorer
-links, and at least one negative case, cross-checked against Horizon.
+The split engine and transaction builder (`packages/settlement`) and the live demo (`web/`) are
+built and exercised on Testnet — see `docs/roadmap.md` for what's still funded-sprint scope
+(Stellar-Wallets-Kit signing, the testanchor SRT asset and trustlines, the full negative-case
+matrix). What's below is the demo's own first real settlement, run through the actual deployed
+page, not a script — and independently re-checked against raw Horizon, not just the page's own
+report.
+
+| Field | Value |
+|---|---|
+| Transaction hash | `f31e14e88b0dad94317e52bc74d5ebf2b9ef7bdf4a988b288209697f210f9e83` |
+| Explorer | https://stellar.expert/explorer/testnet/tx/f31e14e88b0dad94317e52bc74d5ebf2b9ef7bdf4a988b288209697f210f9e83 |
+| Ephemeral signer (generated in-browser, discarded on refresh) | `GDPGE4VQG2MGUGMFIT6TE3THO25FSENIXDPJ2PZ6AJLELNZLEY3SDUH3` |
+| Gross | 10.0000000 XLM (native) |
+| Leg 1 | 5.0000000 XLM → `acuris` (`GCNSHF5I...I64D`) |
+| Leg 2 | 5.0000000 XLM → `partner` (`GBJ2NHWA...ZZTM`) |
+| `settlement_digest` (`= SHA-256("acuris.settlement.v1" \|\| 0x00 \|\| canonical event bytes)`) | `3dc4327df5a98c01508d24a4aaf9e106588cc0f9decc03a6125e52895c61c4f4` |
+| On-chain memo (`MEMO_HASH`, confirmed via `GET horizon-testnet.stellar.org/transactions/<hash>`) | `3dc4327df5a98c01508d24a4aaf9e106588cc0f9decc03a6125e52895c61c4f4` |
+
+The memo matches the digest exactly, and the two payment amounts sum to the gross exactly — both
+confirmed by querying Horizon directly (`/transactions/<hash>` and `/transactions/<hash>/operations`),
+independent of anything the page itself displays. `packages/settlement`'s own vector-driven test
+(`test/transaction.test.ts`) asserts this same invariant — that the built transaction's memo
+equals `fixtures/vectors/settlement-vectors.json`'s pinned digest — for every vector whose amount
+is actually payable on classic Stellar (see that package's README for the one vector that isn't:
+a valid digest input one unit past what a signed-int64 payment amount can express).
 
 ## Deliverable 3 — Verification, Documentation & Evidence Package
 
