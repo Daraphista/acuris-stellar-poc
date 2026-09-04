@@ -2,9 +2,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 
-// Served from a custom domain (testnet.acurismed.com) at the root, not a repo-name subpath —
-// see web/public/CNAME. Override with VITE_BASE for local static-preview testing at a
-// different mount point.
+// Served from a custom domain (testnet.acurismed.com) at the root, not a repo-name subpath.
+// Override with VITE_BASE for local static-preview testing at a different mount point.
 const base = process.env.VITE_BASE ?? "/";
 
 export default defineConfig({

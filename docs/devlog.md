@@ -70,3 +70,25 @@ plan this leads into.
   addresses, memo byte-equal to the displayed digest. Recorded in `docs/evidence.md`.
 - Added the GitHub Pages `pages` job to CI and rewrote the root `README.md`.
 - Test count: 49 (18 canonical + 16 settlement + 15 Rust), up from 30.
+
+## 2026-09-05 — moved the demo's deploy target from GitHub Pages to Vercel
+
+- Switched `web/`'s deployment from GitHub Pages to Vercel: removed the `pages` job from
+  `.github/workflows/ci.yml` (Vercel deploys via its own GitHub integration, independent of this
+  repo's CI), removed `web/public/CNAME` (a GitHub-Pages-specific mechanism — Vercel manages
+  custom domains through its own dashboard + DNS instead), and added `web/vercel.json` pinning
+  the build config (framework, build command, output directory) as code rather than leaving it
+  to dashboard clicks alone.
+- The intended live URL is still `testnet.acurismed.com` — a subdomain of the real
+  [acurismed.com](https://acurismed.com) product site, kept separate so the Testnet demo can
+  never affect the live company site. DNS for that subdomain hadn't actually been configured
+  under the GitHub Pages plan either, so this was a clean point to switch.
+- Also linked the real `acurismed.com` product from the README (top link bar and "Why this
+  exists"), alongside — not instead of — the Stellar demo's own link, since the demo link is
+  what actually lets a reviewer click through the settlement/provenance flows.
+- Couldn't fully dry-run the Vercel build locally (`vercel build` requires an authenticated,
+  linked project); validated the part that's actually in question — the npm-workspace install
+  resolving `packages/canonical`/`packages/settlement` before `web`'s own build runs — by
+  re-confirming `npm run build --workspaces` still succeeds from the repo root. Vercel's
+  monorepo workspace detection (Root Directory set to `web`) is standard, documented behavior,
+  but the first real Vercel deploy is still the actual proof.

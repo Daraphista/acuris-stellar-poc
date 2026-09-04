@@ -1,6 +1,6 @@
 # web
 
-A static Vite + React Testnet demo, deployed to GitHub Pages. Two tabs, both live against the
+A static Vite + React Testnet demo, deployed to Vercel. Two tabs, both live against the
 real deployed contract and real funded Testnet accounts documented in `docs/evidence.md` — see
 that file for the transaction this demo itself produced.
 

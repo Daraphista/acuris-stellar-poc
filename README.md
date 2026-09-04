@@ -171,7 +171,7 @@ not just CLI or page output. A one-line taste of what's in there:
   (`packages/canonical`)
 - **Settlement:** `packages/settlement` — integer-only split engine + transaction builder,
   `@stellar/stellar-sdk` 17.0.1
-- **Demo:** Vite, React 19, static build, deployed to GitHub Pages
+- **Demo:** Vite, React 19, static build, deployed to Vercel
 - **Tooling:** npm workspaces, `stellar-cli` 28.0.0, GitHub Actions
 
 ## 🚀 Run locally
@@ -205,7 +205,7 @@ actually been run, not just written down.
 reallocation this project is proposing.
 
 - **Done, ahead of schedule:** the settlement split engine and transaction builder, a live demo
-  for both flows, the GitHub Pages deploy pipeline.
+  for both flows, the Vercel deploy pipeline.
 - **Weeks 1–2 remaining:** Stellar-Wallets-Kit signing and the testanchor asset + trustlines for
   the production-shaped D1 flow (the live demo currently uses an ephemeral keypair and native
   XLM instead, specifically so it needs no wallet install and no trustline setup).
@@ -222,7 +222,7 @@ reallocation this project is proposing.
 ├── packages/canonical        # Shared digest spec — TS, zero deps, Node + browser entry points
 ├── packages/settlement       # D1 split engine + transaction builder (TS)
 ├── scripts                   # D2 operational scripts, run against the live contract
-├── web                       # The live demo — Vite + React, deployed to GitHub Pages
+├── web                       # The live demo — Vite + React, deployed to Vercel
 ├── fixtures                  # Synthetic manifests, revenue events, cross-language test vectors
 └── docs                      # Architecture, evidence, privacy/authorization model, runbook
 ```

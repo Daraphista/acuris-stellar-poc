@@ -26,34 +26,6 @@ jobs:
       - run: cargo test -p acuris-provenance-contract
       - run: cargo build -p acuris-provenance-contract --target wasm32v1-none --release
 
-  # Builds web/ (the live Testnet demo) and deploys it to GitHub Pages. Never publishes a build
-  # whose tests failed (needs: [typescript]), and only ever deploys from main. Requires a
-  # one-time manual step: repo Settings -> Pages -> Source = "GitHub Actions".
-  pages:
-    needs: [typescript]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    concurrency:
-      group: pages
-      # Cancelling a Pages deploy mid-flight can wedge the environment — let it finish.
-      cancel-in-progress: false
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-      - uses: actions/configure-pages@v5
-      - run: npm install
-      - run: npm run build --workspaces --if-present
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: web/dist
-      - id: deployment
-        uses: actions/deploy-pages@v4
+# web/ (the live Testnet demo) deploys via Vercel's own GitHub integration, not this workflow —
+# see web/vercel.json and web/README.md. Vercel builds and deploys independently on every push
+# once the repo is imported there, with Root Directory set to "web".
