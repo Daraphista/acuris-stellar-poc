@@ -27,6 +27,7 @@ jobs:
       - run: cargo build -p acuris-provenance-contract --target wasm32v1-none --release
 
 # web/ (the live Testnet demo) deploys via Vercel's own GitHub integration, not this workflow —
-# see vercel.json (repo root; Root Directory must stay UNSET in the Vercel project, since it
-# sandboxes the build away from the sibling packages/ workspaces web/ depends on) and
-# web/README.md. Vercel builds and deploys independently on every push once the repo is imported.
+# see web/vercel.json (Root Directory = "web" in the Vercel project; installCommand/buildCommand
+# there use `npm install/run --prefix=..` to reach the workspace root's package.json and sibling
+# packages/ from inside Root Directory) and web/README.md. Vercel builds and deploys
+# independently on every push once the repo is imported.

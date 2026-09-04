@@ -100,3 +100,22 @@ plan this leads into.
   `outputDirectory: "web/dist"` pointing at what the build produces. Verified with a from-scratch
   local rebuild (wiped every workspace's `dist/`, reinstalled, ran the exact `vercel.json`
   commands) before pushing a second time.
+- **Second correction**: Vercel's own "New Project" import UI, when it detects an npm-workspaces
+  monorepo with Root Directory set to a subdirectory, doesn't offer an easy way to blank Root
+  Directory back out — and its own placeholder text for the Install Command field in that exact
+  screen suggests `npm install --prefix=..`. That's the actual first-party-supported escape
+  hatch: npm's `--prefix` flag treats the given directory as the project root for that command,
+  which correctly reaches the real repo root's `package.json` (and its `workspaces` field) from
+  inside `web/` without literally `cd`-ing anywhere. Reverted to `web/vercel.json` (Root
+  Directory stays `web`, matching what the import wizard already has) with `installCommand:
+  "npm install --prefix=.."` and `buildCommand: "npm run build --prefix=.."` — the latter
+  delegates to the repo root's own `build` script, which is exactly `npm run build --workspaces
+  --if-present`. `outputDirectory` stays the Vite-default `dist`, correctly resolving to
+  `web/dist` since it's relative to Root Directory.
+- Couldn't verify this one hands-on: hit the disk-space wall again (down to 121Mi free, worse
+  than the ~211Mi seen earlier this project) mid-way through a local `--prefix=..` test, when
+  wiping every `node_modules` to simulate a clean install ran the disk dry before npm could
+  finish. The command semantics are standard, well-documented npm behavior and match exactly
+  what Vercel's own UI suggests for this scenario, but the actual Vercel deploy is the real test
+  this time, more than once already this project. The disk-space issue itself is now flagged to
+  the user directly, not something this repo's tooling can fix.
