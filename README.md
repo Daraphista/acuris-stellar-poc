@@ -32,21 +32,27 @@ settlement rail, and a tamper-evident provenance registry for de-identified clin
 
 ## 🖥️ The demo
 
-Both tabs are live against the real deployed contract and real funded Testnet accounts —
-**[open it](https://testnet.acurismed.com/)** and click through yourself, or
-look at what it produced:
+A three-route console — [`/`](https://testnet.acurismed.com/),
+[`/settlement`](https://testnet.acurismed.com/settlement), and
+[`/provenance`](https://testnet.acurismed.com/provenance) — live against the real deployed
+contract and real funded Testnet accounts. **[Open it](https://testnet.acurismed.com/)** and
+click through yourself; every value on screen is fetched on load, not a recorded snapshot, and
+both failure-case panels run real rejections against Testnet on demand. Or look at what it
+produced:
+
+<img src="docs/screenshots/console-index.jpg" alt="The console index: network identity, the deployed contract's WASM hash and exported functions, and live status cards for both rails, each showing its most recent on-chain action" width="100%" />
 
 <table>
 <tr>
 <td width="50%" valign="top">
 <strong>Settlement rail</strong> — split &amp; pay, atomically
 <br><br>
-<img src="docs/screenshots/settlement-result.jpg" alt="Settlement rail result: a real Testnet transaction hash, the ephemeral signer, the settlement digest, and both 5 XLM legs" width="100%" />
+<img src="docs/screenshots/settlement-result.jpg" alt="Settlement rail result: a real Testnet transaction hash, the ephemeral signer, the settlement digest independently read back from Horizon and verified matching, and both 5 XLM legs" width="100%" />
 </td>
 <td width="50%" valign="top">
 <strong>Provenance</strong> — verify on-chain, and again in your browser
 <br><br>
-<img src="docs/screenshots/provenance-match.jpg" alt="Provenance lookup showing an Active record and a green MATCH banner where the in-browser digest calculator agrees with the on-chain batch_hash" width="100%" />
+<img src="docs/screenshots/provenance-match.jpg" alt="Provenance lookup showing a green MATCH banner where the in-browser digest calculator agrees with the on-chain batch_hash, and the supersession chain below it" width="100%" />
 </td>
 </tr>
 </table>
@@ -67,10 +73,11 @@ prior Stellar or Soroban experience before this project.
 | Capability | What it proves | Status |
 |---|---|---|
 | **Split** | A revenue event splits 50/50 in integer minor units — no floats, a `sum(legs) === gross` property test over 10,000 random draws | Done — `packages/settlement` |
-| **Settle** | Both payment legs land in one atomic classic Stellar transaction, memo-tagged with a digest of the event that authorized it | **Live on Testnet** — [demo](https://testnet.acurismed.com/#settlement), [evidence](docs/evidence.md) |
+| **Settle** | Both payment legs land in one atomic classic Stellar transaction, memo-tagged with a digest of the event that authorized it — and the demo reads the memo back from Horizon independently to confirm it, rather than trusting its own computation | **Live on Testnet** — [demo](https://testnet.acurismed.com/settlement), [evidence](docs/evidence.md) |
 | **Hash** | A batch manifest's digest is computed identically in TypeScript and Rust from one written spec, cross-checked against fixed vectors | Done — `packages/canonical`, `contracts/provenance` |
 | **Register** | A digest, an opaque batch id, and a terms reference are recorded on-chain — fail-closed on duplicates, non-destructive on corrections | **Deployed & live** — [contract](https://stellar.expert/explorer/testnet/contract/CCTYK4O5YMMCA2JYXVZRHDGKTJBBX56ALHRR3BBW32K4Y7RPCWBYFJ77) |
-| **Verify** | Anyone — reviewer or Acuris — can independently recompute a digest and check it against the chain, with no special access | **Live** — [demo](https://testnet.acurismed.com/#provenance) |
+| **Verify** | Anyone — reviewer or Acuris — can independently recompute a digest and check it against the chain, with no special access | **Live** — [demo](https://testnet.acurismed.com/provenance) |
+| **Fail correctly** | Both of D2's guards and five of D1's negative cases run for real, on demand, against Testnet — not just asserted in unit tests | **Live** — failure-case panels on both demo routes |
 
 ## 🌐 How it uses Stellar
 
@@ -79,8 +86,8 @@ prior Stellar or Soroban experience before this project.
 | **Classic transactions** | One transaction, two payment operations, atomic by construction — either both settlement legs land or neither does. The 50/50 ratio is computed off-chain, not enforced by on-chain code (see [Deferred: on-chain-enforced split](docs/architecture.md#deferred-on-chain-enforced-split)). |
 | **`MEMO_HASH`** | Every settlement transaction carries the SHA-256 digest of the off-chain revenue event it settles — a reviewer can recompute that digest independently and compare it to the memo on the ledger. |
 | **Soroban storage + `require_auth`** | The provenance contract is a minimal append-only registry: an admin/registrar allow-list enforced by `require_auth()`, fail-closed duplicate rejection, and non-destructive supersession for corrections. |
-| **Soroban RPC (read)** | The live demo's Provenance tab queries the deployed contract by simulation only — no signing, no submission, just a read. |
-| **Horizon + Friendbot** | The live demo's Settlement tab generates a keypair in your browser, funds it via Friendbot, and submits the signed transaction directly to Horizon. |
+| **Soroban RPC (read)** | The live demo's `/provenance` route queries the deployed contract by simulation only — no signing, no submission, just a read. Its two failure cases are also simulation-only: both of the contract's guards reject before anything would be written. |
+| **Horizon + Friendbot** | The live demo's `/settlement` route generates a keypair in your browser, funds it via Friendbot, and submits the signed transaction directly to Horizon — then independently re-reads the transaction back from Horizon to confirm the memo, rather than trusting its own computation. |
 
 ## 🔒 What never touches the chain
 
@@ -204,13 +211,16 @@ actually been run, not just written down.
 [`docs/roadmap.md`](docs/roadmap.md) for the full week-by-week breakdown and the hour
 reallocation this project is proposing.
 
-- **Done, ahead of schedule:** the settlement split engine and transaction builder, a live demo
-  for both flows, the Vercel deploy pipeline.
+- **Done, ahead of schedule:** the settlement split engine and transaction builder, a three-route
+  live demo console for both flows, five of D1's negative cases running live against Testnet
+  (`op_underfunded`, `tx_too_late`, `tx_bad_auth`, plus two client-side guards) and both of D2's,
+  the Vercel deploy pipeline.
 - **Weeks 1–2 remaining:** Stellar-Wallets-Kit signing and the testanchor asset + trustlines for
   the production-shaped D1 flow (the live demo currently uses an ephemeral keypair and native
-  XLM instead, specifically so it needs no wallet install and no trustline setup).
-- **Week 3:** D1's full negative-case matrix (missing trustline, insufficient balance, duplicate
-  event replay, and more), a full cross-flow integration pass.
+  XLM instead, specifically so it needs no wallet install and no trustline setup) — the demo's
+  failure-case panel already lists these as pending rather than claiming coverage it doesn't have.
+- **Week 3:** the remaining D1 negative cases (missing trustline, duplicate event replay, both
+  gated on the items above), a full cross-flow integration pass.
 - **Week 4:** the demo video, a git-history privacy sweep, a clean-room re-verification of the
   runbook, and the submission package.
 

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Static Testnet demo harness for D1 (settlement rail) and D2 (provenance registry). Deployed to GitHub Pages. See docs/architecture.md.",
+  "description": "Static Testnet demo console for D1 (settlement rail) and D2 (provenance registry). Deployed to Vercel. See docs/architecture.md.",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

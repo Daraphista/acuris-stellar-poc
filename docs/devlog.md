@@ -119,3 +119,39 @@ plan this leads into.
   what Vercel's own UI suggests for this scenario, but the actual Vercel deploy is the real test
   this time, more than once already this project. The disk-space issue itself is now flagged to
   the user directly, not something this repo's tooling can fix.
+- Rebuilt `web/` from the two-tab demo into a three-route console (`/`, `/settlement`,
+  `/provenance`) after a design pass through Google Stitch produced a dense, mono-forward "ops
+  console" system (Tailwind v4, Geist + JetBrains Mono, inline SVG icons instead of the Material
+  Symbols webfont) meant to read as internal tooling rather than the AI-generated-looking navy
+  gradient the previous version drew a critique for. Kept `lib/settlementRail.ts` and
+  `lib/provenance.ts` as the seam and rebuilt everything above them.
+- The mockups Stitch produced included substantial invented content — a fabricated Merkle proof,
+  gas/CPU figures with no source, a fake streaming trace log, and "immutable" language where this
+  reviewer has specifically asked for "tamper-evident." None of that was ported. Two genuinely
+  useful ideas from the mockups *were* kept and made real: the console index now fetches the
+  latest settlement and walks the live `supersedes` chain on load instead of showing a frozen
+  snapshot, and the settlement success screen now independently re-reads the transaction's memo
+  from Horizon (`confirmMemoOnChain`) rather than comparing its own computed digest to itself.
+- Built failure-case panels for both routes, run for real: D2's two guards
+  (`lib/provenanceFailures.ts`, `DuplicateRecord` / `NotAuthorizedRegistrar`, both rejected at
+  simulation with no ledger write) and five of D1's negative cases
+  (`lib/failureCases.ts`) — two refused client-side by the split engine and transaction builder
+  (sub-2-stroop, int64 overflow) and three genuinely submitted to Testnet and rejected by Horizon
+  (`op_underfunded`, `tx_too_late`, `tx_bad_auth` from a deliberately wrong network passphrase).
+  The three D1 cases that aren't built yet (missing trustline, event replay, wallet-rejected
+  signature) are listed as pending funded-sprint scope in the same panel rather than omitted.
+- One real bug caught in testing, not left for later: the first pass at the network-level
+  failure cases wrapped the memo digest in `Buffer.from(...)`, which doesn't exist in a browser —
+  `Memo.hash()` already takes a raw `Uint8Array`. Fixed and re-verified live before considering
+  the cases done.
+- Verified end-to-end against live Testnet, not just `tsc`/build: ran a fresh settlement through
+  the deployed page and independently confirmed via a direct Horizon query
+  (`curl .../transactions/<hash>`) that the on-chain memo equals the digest the page displayed
+  and that both payment amounts sum to the gross; ran both provenance failure cases and got the
+  real `Error(Contract, #5)` / `#4` back from the live contract; ran all five settlement failure
+  cases and got the real Horizon/client rejections back. All 34 existing TypeScript tests still
+  pass. Also caught that `testnet.acurismed.com`'s DNS — recorded as unconfigured as of the
+  previous entry — now resolves to Vercel; the domain was live, just still serving the old build
+  until this deploy.
+- Merged to `main` and pushed; Vercel's GitHub integration picked it up and the live site now
+  serves the new console.
