@@ -39,6 +39,19 @@ export interface SettlementResult {
   digestHex: string;
   split: Split;
   transactionHash: string;
+  /** Ledger the transaction landed in, straight from Horizon's submit response. */
+  ledger: number;
+}
+
+/** What Horizon says about a transaction when asked independently, after the fact. */
+export interface OnChainConfirmation {
+  /** The MEMO_HASH as Horizon reports it, hex-encoded. Compare against the locally computed
+   *  digest — that comparison is the whole point of D1, and it is only meaningful if this side
+   *  of it was read back from the network rather than remembered from the submit call. */
+  memoHex: string | null;
+  memoType: string;
+  createdAt: string;
+  operationCount: number;
 }
 
 async function fundViaFriendbot(publicKey: string): Promise<void> {
@@ -109,6 +122,41 @@ export async function runSettlement(args: {
     digestHex: toHex(digest),
     split,
     transactionHash: response.hash,
+    ledger: response.ledger,
+  };
+}
+
+function base64ToHex(base64: string): string {
+  const binary = atob(base64);
+  let hex = "";
+  for (let i = 0; i < binary.length; i += 1) {
+    hex += binary.charCodeAt(i).toString(16).padStart(2, "0");
+  }
+  return hex;
+}
+
+/**
+ * Re-reads a submitted transaction from Horizon so the memo can be compared against the digest
+ * this tab computed. Deliberately a separate request rather than a value carried over from
+ * `runSettlement` — a page claiming "memo == digest" while sourcing both sides from its own
+ * memory proves nothing to a reviewer.
+ *
+ * Best-effort: a failure here means the settlement still succeeded, so callers should degrade to
+ * "couldn't read it back" rather than reporting a mismatch.
+ */
+export async function confirmMemoOnChain(transactionHash: string): Promise<OnChainConfirmation> {
+  const horizon = new Horizon.Server(HORIZON_URL);
+  const record = await withRetry(() => horizon.transactions().transaction(transactionHash).call(), {
+    attempts: 3,
+    delayMs: 1200,
+    retryOn: isNotFoundResponse,
+  });
+
+  return {
+    memoHex: record.memo ? base64ToHex(record.memo) : null,
+    memoType: record.memo_type,
+    createdAt: record.created_at,
+    operationCount: record.operation_count,
   };
 }
 

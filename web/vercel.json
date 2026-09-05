@@ -2,5 +2,6 @@
   "framework": "vite",
   "installCommand": "npm install --prefix=..",
   "buildCommand": "npm run build --prefix=..",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }

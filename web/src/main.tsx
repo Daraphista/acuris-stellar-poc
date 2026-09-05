@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App.js";
-import "./theme.css";
+import "./styles/theme.css";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
