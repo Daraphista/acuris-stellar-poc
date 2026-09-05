@@ -1,69 +1,39 @@
-import { useEffect, useState } from "react";
-import { SettlementTab } from "./components/SettlementTab.js";
-import { ProvenanceTab } from "./components/ProvenanceTab.js";
+import { useEffect } from "react";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { AppShell } from "./components/AppShell.js";
+import { Index } from "./routes/Index.js";
+import { Settlement } from "./routes/Settlement.js";
+import { Provenance } from "./routes/Provenance.js";
 
-type TabId = "settlement" | "provenance";
+/**
+ * The demo previously used `#settlement` / `#provenance` hash tabs, and those links are in the
+ * README and in messages already sent to reviewers. They keep working.
+ */
+function LegacyHashRedirect() {
+  const { hash, pathname } = useLocation();
+  const navigate = useNavigate();
 
-function tabFromHash(): TabId {
-  return window.location.hash === "#provenance" ? "provenance" : "settlement";
+  useEffect(() => {
+    if (pathname !== "/") return;
+    if (hash === "#settlement") navigate("/settlement", { replace: true });
+    if (hash === "#provenance") navigate("/provenance", { replace: true });
+  }, [hash, pathname, navigate]);
+
+  return null;
 }
 
 export function App() {
-  const [tab, setTab] = useState<TabId>(tabFromHash);
-
-  useEffect(() => {
-    const onHashChange = () => setTab(tabFromHash());
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
-  }, []);
-
-  function selectTab(next: TabId) {
-    window.location.hash = next;
-    setTab(next);
-  }
-
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Acuris Stellar PoC — Testnet Demo</h1>
-        <p>
-          Live against Stellar Testnet. Source, evidence, and docs:{" "}
-          <a href="https://github.com/Daraphista/acuris-stellar-poc" target="_blank" rel="noreferrer">
-            github.com/Daraphista/acuris-stellar-poc
-          </a>
-        </p>
-      </header>
-
-      <div className="tabs" role="tablist">
-        <button
-          type="button"
-          role="tab"
-          className="tab-button"
-          aria-selected={tab === "settlement"}
-          onClick={() => selectTab("settlement")}
-        >
-          Settlement rail (D1)
-        </button>
-        <button
-          type="button"
-          role="tab"
-          className="tab-button"
-          aria-selected={tab === "provenance"}
-          onClick={() => selectTab("provenance")}
-        >
-          Provenance (D2)
-        </button>
-      </div>
-
-      {tab === "settlement" ? <SettlementTab /> : <ProvenanceTab />}
-
-      <p className="footer-note">
-        Acuris Med AI — Stellar Philippines Instawards. See{" "}
-        <a href="https://github.com/Daraphista/acuris-stellar-poc/blob/main/docs/evidence.md" target="_blank" rel="noreferrer">
-          docs/evidence.md
-        </a>{" "}
-        for the full transaction history behind this page.
-      </p>
-    </div>
+    <BrowserRouter>
+      <LegacyHashRedirect />
+      <AppShell>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/settlement" element={<Settlement />} />
+          <Route path="/provenance" element={<Provenance />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AppShell>
+    </BrowserRouter>
   );
 }

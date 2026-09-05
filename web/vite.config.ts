@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import { fileURLToPath } from "node:url";
 
 // Served from a custom domain (testnet.acurismed.com) at the root, not a repo-name subpath.
@@ -8,7 +9,7 @@ const base = process.env.VITE_BASE ?? "/";
 
 export default defineConfig({
   base,
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       // Lets the digest calculator import a real fixture manifest directly, so the demo can

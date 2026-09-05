@@ -79,30 +79,33 @@ function server(): InstanceType<typeof rpc.Server> {
   return cachedServer;
 }
 
-/**
- * Looks up a batch by its human-readable batch_id (e.g. "batch-0001-synthetic") against the
- * live contract. Simulation needs *a* source account even for a read-only call — this uses the
- * known-funded acuris address rather than a null/placeholder account, because a 404 loading
- * that account is the clearest possible signal that Testnet has been reset out from under the
- * demo, and this function turns that specific case into a message that says so.
- */
-export async function lookupByBatchId(batchId: string): Promise<ProvenanceRecord> {
+/** Loads the account every read-only simulation needs as its source. A 404 here is the clearest
+ *  available signal that Testnet was reset out from under the demo, so it gets its own error. */
+async function simulationSource() {
   const rpcServer = server();
-
-  let source;
   try {
-    source = await rpcServer.getAccount(SIMULATION_SOURCE_PUBLIC_KEY);
-  } catch (error) {
+    return await rpcServer.getAccount(SIMULATION_SOURCE_PUBLIC_KEY);
+  } catch {
     throw new TestnetResetError(
       "Could not load the demo's simulation account from Stellar Testnet. Testnet may have " +
         "been reset — see docs/runbook.md to confirm and redeploy if so.",
     );
   }
+}
+
+/** Runs one read-only contract call and decodes the record it returns. `notFoundLabel` is what
+ *  the caller was looking for, used only to phrase a RecordNotFound error. */
+async function simulateRead(
+  functionName: "get" | "get_by_batch_id",
+  argument: ReturnType<typeof nativeToScVal>,
+  notFoundLabel: string,
+): Promise<ProvenanceRecord> {
+  const rpcServer = server();
+  const source = await simulationSource();
 
   const contract = new Contract(PROVENANCE_CONTRACT_ID);
-  const op = contract.call("get_by_batch_id", nativeToScVal(new TextEncoder().encode(batchId)));
   const tx = new TransactionBuilder(source, { fee: BASE_FEE, networkPassphrase: Networks.TESTNET })
-    .addOperation(op)
+    .addOperation(contract.call(functionName, argument))
     .setTimeout(30)
     .build();
 
@@ -113,13 +116,40 @@ export async function lookupByBatchId(batchId: string): Promise<ProvenanceRecord
   }
   if (rpc.Api.isSimulationError(sim)) {
     const code = parseContractErrorCode(sim.error);
-    if (code === 6 /* RecordNotFound */) throw new RecordNotFoundError(batchId);
+    if (code === 6 /* RecordNotFound */) throw new RecordNotFoundError(notFoundLabel);
     throw new ContractSimulationError(sim.error);
   }
   if (!rpc.Api.isSimulationSuccess(sim) || !sim.result) {
     throw new Error("Unexpected simulation response shape from Soroban RPC.");
   }
 
-  const raw = scValToNative(sim.result.retval) as Record<string, unknown>;
-  return toRecord(raw);
+  return toRecord(scValToNative(sim.result.retval) as Record<string, unknown>);
+}
+
+/**
+ * Looks up a batch by its human-readable batch_id (e.g. "batch-0001-synthetic"). The secondary
+ * index tracks corrections, so this resolves to the newest record in a supersession chain, not
+ * the first one registered.
+ */
+export async function lookupByBatchId(batchId: string): Promise<ProvenanceRecord> {
+  return simulateRead("get_by_batch_id", nativeToScVal(new TextEncoder().encode(batchId)), batchId);
+}
+
+/**
+ * Looks up a single record by its `batch_hash` — the contract's primary key. Needed to walk a
+ * `supersedes` chain backwards, since each link points at a hash rather than a batch_id.
+ */
+export async function getByHash(batchHashHex: string): Promise<ProvenanceRecord> {
+  return simulateRead("get", nativeToScVal(hexToBytes(batchHashHex), { type: "bytes" }), batchHashHex);
+}
+
+function hexToBytes(hex: string): Uint8Array {
+  if (hex.length % 2 !== 0 || /[^0-9a-fA-F]/.test(hex)) {
+    throw new Error(`Not a hex string: "${hex}"`);
+  }
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < bytes.length; i += 1) {
+    bytes[i] = Number.parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  }
+  return bytes;
 }

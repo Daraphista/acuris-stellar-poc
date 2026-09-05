@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { batchHashAsync, toHex, CanonicalError, type BatchManifestEntry } from "@acuris-stellar-poc/canonical/browser";
 import batch0001CorrectedV2 from "@fixtures/batch-manifests/batch_0001_corrected_v2.synthetic.json";
-import { HashDisplay } from "./HashDisplay.js";
-import { Callout } from "./Callout.js";
+import { HashChip } from "./HashChip.js";
+import { CancelIcon, CheckCircleIcon, ErrorIcon } from "./icons.js";
 
 // The manifest that get_by_batch_id("batch-0001-synthetic") currently resolves to — the newest
 // link in the demo's supersession chain — so this calculator shows MATCH against a freshly
@@ -55,26 +55,70 @@ export function DigestCalculator({ compareToHex }: { compareToHex?: string }) {
   const isMismatch = computedHex !== null && compareToHex !== undefined && computedHex !== compareToHex;
 
   return (
-    <div>
-      <p className="hint">
-        Paste manifest entries (or edit the pre-filled ones below) — the digest is recomputed in
-        this browser, from the same encoding rules as the Rust contract, every time you type.
+    <div className="flex flex-col gap-space-sm">
+      <p className="font-body-compact text-body-compact text-on-surface-variant">
+        The digest is recomputed in your browser as you type, using the same encoding rules as the
+        Rust contract. Nothing is sent anywhere — edit a byte and watch the match break.
       </p>
-      <div className="field">
-        <label htmlFor="manifest-json">Manifest entries (JSON)</label>
+
+      <div className="flex flex-col gap-space-xs">
+        <label
+          className="font-code-micro text-code-micro uppercase tracking-wider text-outline"
+          htmlFor="manifest-json"
+        >
+          Manifest entries (JSON)
+        </label>
         <textarea
           id="manifest-json"
           value={text}
           onChange={(e) => setText(e.target.value)}
           spellCheck={false}
+          rows={12}
+          className={`w-full bg-surface-dim border rounded-sm p-space-sm font-code-compact text-code-compact text-on-surface resize-y focus:outline-none focus:border-primary ${
+            error ? "border-error" : "border-outline-variant"
+          }`}
         />
       </div>
 
-      {error && <Callout kind="error">{error}</Callout>}
-      {computedHex && <HashDisplay label="computed batch_hash" value={computedHex} />}
+      {error ? (
+        <div className="flex items-start gap-space-xs px-space-sm py-space-xs rounded-sm border border-error/40 bg-error/10">
+          <ErrorIcon size={14} className="text-error mt-0.5 shrink-0" />
+          <span className="font-code-compact text-code-compact text-error break-words">{error}</span>
+        </div>
+      ) : null}
 
-      {isMatch && <div className="match-banner match">✓ MATCH — equals the on-chain batch_hash above</div>}
-      {isMismatch && <div className="match-banner no-match">✗ NO MATCH — differs from the on-chain batch_hash above</div>}
+      {computedHex ? (
+        <div className="flex flex-wrap items-center gap-space-sm">
+          <span className="font-code-micro text-code-micro uppercase tracking-wider text-outline">
+            computed batch_hash
+          </span>
+          <HashChip value={computedHex} label="computed batch_hash" />
+        </div>
+      ) : null}
+
+      {isMatch ? (
+        <div className="flex items-center gap-space-xs px-space-sm py-space-xs rounded-sm border border-secondary/40 bg-secondary/10">
+          <CheckCircleIcon size={14} className="text-secondary shrink-0" />
+          <span className="font-code-compact text-code-compact text-secondary">
+            MATCH — equals the batch_hash recorded on chain
+          </span>
+        </div>
+      ) : null}
+
+      {isMismatch ? (
+        <div className="flex items-center gap-space-xs px-space-sm py-space-xs rounded-sm border border-error/40 bg-error/10">
+          <CancelIcon size={14} className="text-error shrink-0" />
+          <span className="font-code-compact text-code-compact text-error">
+            NO MATCH — differs from the batch_hash recorded on chain
+          </span>
+        </div>
+      ) : null}
+
+      {!compareToHex && computedHex ? (
+        <p className="font-code-micro text-code-micro text-outline">
+          Look up a record above to compare this against what the contract holds.
+        </p>
+      ) : null}
     </div>
   );
 }
