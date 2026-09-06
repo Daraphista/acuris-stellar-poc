@@ -155,3 +155,20 @@ plan this leads into.
   until this deploy.
 - Merged to `main` and pushed; Vercel's GitHub integration picked it up and the live site now
   serves the new console.
+
+## 2026-09-06 — Instawards submission got the green light to proceed; sprint plan started
+
+- Submission received a green light from Stellar to proceed (not yet funded/disbursed). Wrote
+  `docs/sprint-plan.md`: a day-by-day breakdown of `docs/roadmap.md`'s remaining work into a
+  30-day, one-commit-per-day cadence, sequenced by dependency (wallet connect before wallet
+  signing before the reject-path negative case; trustlines before the missing-trustline negative
+  case; etc.), with a weekly buffer day to absorb slippage.
+- **Day 1 of the sprint plan**: decided `rotate_admin` — chose to document the explicit rationale
+  for leaving it out of this PoC rather than implement it (`docs/authorization.md`). The admin key
+  gates only `set_registrar`/`revoke`, not `register()` or any fund movement, so losing it
+  degrades to "allow-list frozen" rather than "funds at risk" or "data lost," and is recoverable
+  via redeploy+re-init — an acceptable Testnet-PoC failure mode, explicitly flagged as needing a
+  real fix (a `rotate_admin` function or multi-admin model) before any production use.
+- Noted for Day 2: local `cargo` isn't on `PATH` (rustup is installed via Homebrew, but no
+  toolchain resolves) — needs fixing before `contracts/provenance/src/test.rs`'s new cases can be
+  run locally.

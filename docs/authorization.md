@@ -15,8 +15,27 @@ Three roles, all Stellar `Address` values (Testnet keypairs for this PoC):
 
 - `admin` is set once, at `init(admin: Address)`, called exactly once at deployment. There is
   **no `rotate_admin` function in this version** — a deliberate scope limit, not an oversight,
-  called out here so a reviewer doesn't have to guess. Future work: an admin-rotation or
-  multi-admin path before any production use.
+  called out here so a reviewer doesn't have to guess.
+
+  **Why this is an acceptable gap for a 30-day Testnet PoC**: the admin key
+  (`GC6WPNFAF3FCUN64VUYWYQP2W3WB46IRX6XMNYL6PX2ZYEY7YEHDNNV5`, `docs/evidence.md`) gates exactly
+  two operations — `set_registrar` and `revoke`. It does not gate `register()` (a registrar-only
+  op) or any fund movement (D1's settlement rail has its own, entirely separate key model — see
+  below). If this key were lost or compromised during the PoC period:
+  - Existing records stay readable via `get()`/`get_by_batch_id()` — nothing about read access
+    depends on the admin key.
+  - The already-allow-listed registrar can keep calling `register()` — normal operation
+    continues.
+  - What breaks: the allow-list becomes frozen (no new registrar could be added or removed) and
+    `revoke()` becomes permanently unavailable. Both are recoverable by redeploying the contract
+    with a fresh `init`, the same "regenerate and redeploy" posture already accepted for D1's
+    scripted-signing key.
+
+  In short, admin-key loss degrades to "can't change who's allow-listed" rather than "funds at
+  risk" or "data lost" — an acceptable failure mode for a Testnet demonstration, not for a
+  production deployment. **Before any production use**, this needs either a `rotate_admin(new:
+  Address)` function (admin-signed, single hop) or a multi-admin/threshold model — tracked here as
+  explicit future work, not deferred silently.
 - Every write path calls `caller.require_auth()` — the transaction must be signed by the address
   claiming to act, enforced by the Soroban runtime, not by application logic that could be
   bypassed.
